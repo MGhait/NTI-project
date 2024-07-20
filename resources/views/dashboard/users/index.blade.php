@@ -75,7 +75,7 @@
 {{--    for supervisor make product like messages--}}
 @if(\App\Policycheck::pv('supervisor'))
     @if (count($products) == 0)
-        <h3>no Categories saved yet</h3>
+        <h3>No Products Need Publishing</h3>
     @else
         <table class="table table-striped table-bordered" style="margin: 0 auto; width: 77%;">
             <tr>
@@ -86,7 +86,9 @@
                 <th>Operations</th>
                 <th><input type="checkbox" id="select-all"></th>
             </tr>
-            @foreach ($products as $product)
+
+        @foreach ($products as $product)
+
                 @if($product->needReview)
                 <tr>
                     <td>
@@ -104,21 +106,12 @@
 
                     <td>
 
-                        <form action="{{ route('users.isActive', $product->id) }}" method="POST" style="display: inline;">
-                            @csrf
-                            @method('POST')
-                            <a class="btn btn-primary m-2" href="{{ route('users.edit', $user->id) }}">Edit</a>
-                            @if ($user->isActive == 0)
-                                <button type="submit" class="btn btn-secondary">Active</button>
-                            @else
-                                <button type="submit" class="btn btn-warning">DeActive</button>
-                            @endif
-                        </form>
-
+                            <a class="btn btn-primary" href="{{ route('products.edit', $product->id) }}">Edit</a>
+                            <a class="btn btn-primary" href="{{ route('products.publish', $product->id) }}">publish</a>
 
                     </td>
                     <td>
-                        <input type="checkbox" name="selected[]" value="{{$message->id}}">
+                        <input type="checkbox" name="selected[]" value="{{$product->id}}">
                     </td>
                 </tr>
                 @endif
@@ -126,7 +119,7 @@
         </table>
 
         <div id="paginationNumbers">
-            {!! $users->links('pagination::bootstrap-4') !!}
+            {!! $products->links('pagination::bootstrap-4') !!}
         </div>
 
     @endif
@@ -152,8 +145,72 @@
 
     </script>
 @endif
+
+@if(\App\Policycheck::pv('editor'))
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
+
+    @if (count($products) == 0)
+        <h3>no Products saved yet</h3>
+    @else
+        <table class="table table-striped table-bordered" style="margin: 0 auto; width: 77%;">
+            <tr>
+                <th>no</th>
+                <th>Product Name</th>
+                <th>Product category</th>
+                <th>Product price</th>
+                <th>Operations</th>
+            </tr>
+            @foreach ($products as $product)
+                @if($product->added_by == Session::get('userId'))
+                <tr>
+                    <td>
+                        {{ ++$i }}
+                    </td>
+                    <td>
+                        {{ $product->name }}
+                    </td>
+                    <td>
+                        {{ $product->category->name }}
+                    </td>
+
+                    <td>
+                        {{ $product->price }}
+                    </td>
+
+                    <td>
+                        <form action="{{ route('products.destroy',$product->id) }}" method="POST" style="display: inline;">
+
+                            <a class="btn btn-info" href="{{ route('products.show', $product->id) }}">Show</a>
+                            @if(\App\Policycheck::pv('supervisor') || (\App\Policycheck::pv('editor') && $product->added_by == Session::get('userId')))
+                                <a class="btn btn-primary" href="{{ route('products.edit', $product->id) }}">Edit</a>
+                            @endif
+
+                            @csrf
+                            @method('DELETE')
+                            @if(\App\Policycheck::pv('admin'))
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            @endif
+                        </form>
+
+                    </td>
+
+
+                </tr>
+                @endif
+            @endforeach
+        </table>
+
+        <div id="paginationNumbers">
+            {!! $products->links('pagination::bootstrap-4') !!}
+        </div>
+
+    @endif
+@endif
 {{--@endif--}}
-{{--    add to needAgree to dashboard [route or somthing]--}}
 {{--    edit product table (add column to make it need agree or not [forign key to supervisor
 table ..... think of it later])--}}
 @endsection

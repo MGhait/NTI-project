@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,9 +14,25 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('id')->paginate(5);
-        return view('dashboard.users.index', compact('users'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        if (\App\Policycheck::pv('admin'))
+        {
+            $users = User::orderBy('id')->paginate(5);
+            return view('dashboard.users.index', compact('users'))
+                ->with('i', (request()->input('page', 1) - 1) * 5);
+        }
+        elseif (\App\Policycheck::pv('supervisor'))
+        {
+            $products = Product::where('needReview' , '=', 1)->orderBy('id')->paginate(5);
+//            dd($products);
+            return view('dashboard.users.index', compact('products'))
+                ->with('i', (request()->input('page', 1) - 1) * 5);
+        }
+        elseif (\App\Policycheck::pv('editor')){
+            $products = Product::orderBy('id')->paginate(5);
+            return view('dashboard.users.index', compact('products'))
+                ->with('i', (request()->input('page', 1) - 1) * 5);
+        }
+
     }
 
     /**

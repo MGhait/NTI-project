@@ -30,12 +30,13 @@ Route::group(['prefix'=>'dashboard', 'middleware'=> LoggedMiddleware::class], fu
         return view('dashboard.products.index');
     });
     Route::resource("/products", ProductController::class);
-    Route::post('/products/publish/{product}', 'App\Http\Controllers\ProductController@publish')->name('products.publish');
+    Route::get('/products/publish/{product}', 'App\Http\Controllers\ProductController@publish')->name('products.publish');
     // ----------------------------- Users ---------------------------- //
     Route::get('/users', function (){
         return view('dashboard.users.index');
     })->name('users.index');
     Route::resource("/users", UserController::class);
+    Route::get('/users/publish/{product}', 'App\Http\Controllers\ProductController@publish')->name('users.publish');
     Route::post('/users/isActive/{user}', 'App\Http\Controllers\UserController@isActive')->name('users.isActive');
 
 

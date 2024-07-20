@@ -126,7 +126,8 @@ class ProductController extends Controller
     }
     public function publish(Product $product)
     {
-        Product::whereIn('id', $product->id)->update(['needReview' => 0]);
-        return redirect()->route('products.index')->with('success','Product published successfully');
+//        dd($product);
+        Product::where('id', $product->id)->update(['needReview' => 0]);
+        return redirect()->back()->with('success','Product published successfully');
     }
 }

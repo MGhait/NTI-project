@@ -78,7 +78,13 @@
                 <a href="{{url('/dashboard/users')}}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Users</a>
                     <a href="{{route('categories.create')}}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Create Category</a>
                 @endif
+                @if(\App\Policycheck::pv('supervisor') || \App\Policycheck::pv('admin'))
                 <a href="{{url('/dashboard/categories')}}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Categories</a>
+                @endif
+                @if(\App\Policycheck::pv('editor'))
+                <a href="{{route('products.create')}}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Create Product</a>
+                @endif
+                @if(\App\Policycheck::pv('editor') || \App\Policycheck::pv('supervisor')) @endif
                 <a href="{{url('/dashboard/products')}}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Products</a>
                 {{--                <a href="{{url('/dashboard/projectToCategory')}}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>ProjectToCategory</a>--}}
 {{--                <a href="{{url('/dashboard/messages')}}" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Messages</a>--}}

@@ -18,10 +18,12 @@ class LogController extends Controller
         $loginUser = User::where("logName", "=", $request->logName)->first();
 
         if($loginUser){
+//dd(Hash::check($request->password, $loginUser->password));
 //            if (Hash::needsRehash($loginUser->password)) {
 //                $loginUser->password = Hash::make($request->password);
 //                $loginUser->save();
 //            }
+//            dd($loginUser, $request->password);
             if (Hash::check($request->password, $loginUser->password)) {
 
                 Session::put('userId', $loginUser->id);
@@ -31,8 +33,8 @@ class LogController extends Controller
                 if($loginUser->role == 'admin') {
                     return redirect()->route('users.index');
                 }
-                else if($loginUser->role == 'editor') {
-                    return redirect()->route('users.index');
+            else if($loginUser->role == 'editor') {
+                return redirect()->route('users.index');
                 }
                 else if($loginUser->role == 'supervisor') {
                     return redirect()->route('users.index');

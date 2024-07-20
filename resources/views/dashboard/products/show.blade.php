@@ -36,6 +36,9 @@
                 @endphp
                 <img src="{{ $photo }}" width="300" alt="">
             </div>
+            @if(\App\Policycheck::pv('supervisor'))
+                <a class="btn btn-info m-5" href="{{ route('products.publish', $product->id) }}">publish</a>
+            @endif
 
         </h2>
 

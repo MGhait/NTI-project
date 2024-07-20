@@ -32,14 +32,16 @@
                         <form action="{{ route('categories.destroy',$category->id) }}" method="POST" style="display: inline;">
 
                             <a class="btn btn-info" href="{{ route('categories.show', $category->id) }}">Show</a>
+                            @if(\App\Policycheck::pv('admin'))
 
                             <a class="btn btn-primary" href="{{ route('categories.edit', $category->id) }}">Edit</a>
 
                             @csrf
                             @method('DELETE')
-
                             <button type="submit" class="btn btn-danger">Delete</button>
+                            @endif
                         </form>
+                        @if(\App\Policycheck::pv('admin'))
                         <form action="{{ route('categories.isActive', $category->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('POST')
@@ -49,6 +51,7 @@
                                 <button type="submit" class="btn btn-warning">DeActive</button>
                             @endif
                         </form>
+                        @endif
 
 
                     </td>

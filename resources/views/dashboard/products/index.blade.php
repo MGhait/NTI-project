@@ -10,7 +10,6 @@
         </div>
     @endif
 
-    <a class="btn btn-success" href="{{ route('products.create') }}">Create New Product</a>
     @if (count($products) == 0)
         <h3>no Products saved yet</h3>
     @else
@@ -59,7 +58,7 @@
                             @endif
                         </form>
                         @if(\App\Policycheck::pv('supervisor'))
-                        <a class="btn btn-info" href="{{ route('products.publish', $product->id) }}">publish</a>
+                        <a class="btn {{ $product->needReview ? " btn-primary" :" btn-danger" }}" href="{{ route('users.publish', $product->id) }}">publish</a>
                         @endif
 
                     </td>
@@ -84,29 +83,7 @@
                     checkbox.checked = this.checked;
                 }
             });
-            {{--document.querySelectorAll('.delete-message').forEach(button => {--}}
-            {{--    button.addEventListener('click', function() {--}}
-            {{--        if (confirm('Are you sure you want to delete this message?')) {--}}
-            {{--            fetch(`{{ route('messages.destroy', '') }}/${this.dataset.id}`, {--}}
-            {{--                method: 'DELETE',--}}
-            {{--                headers: {--}}
-            {{--                    'X-CSRF-TOKEN': '{{ csrf_token() }}',--}}
-            {{--                },--}}
-            {{--            }).then(() => location.reload());--}}
-            {{--        }--}}
-            {{--    });--}}
-            {{--});--}}
 
-            {{--document.querySelectorAll('.toggle-read').forEach(button => {--}}
-            {{--    button.addEventListener('click', function() {--}}
-            {{--        fetch(`{{ route('messages.isRead', '') }}/${this.dataset.id}`, {--}}
-            {{--            method: 'POST',--}}
-            {{--            headers: {--}}
-            {{--                'X-CSRF-TOKEN': '{{ csrf_token() }}',--}}
-            {{--            },--}}
-            {{--        }).then(() => location.reload());--}}
-            {{--    });--}}
-            {{--});--}}
         </script>
     @endif
 @endsection
