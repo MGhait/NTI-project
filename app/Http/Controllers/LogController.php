@@ -18,13 +18,10 @@ class LogController extends Controller
         $loginUser = User::where("logName", "=", $request->logName)->first();
 
         if($loginUser){
-//dd(Hash::check($request->password, $loginUser->password));
-//            if (Hash::needsRehash($loginUser->password)) {
-//                $loginUser->password = Hash::make($request->password);
-//                $loginUser->save();
-//            }
-//            dd($loginUser, $request->password);
-            if (Hash::check($request->password, $loginUser->password)) {
+            if ($loginUser->isActive != 1) {
+                return redirect()->back()->with("failed", "This account is not activate");
+            }
+            else if (Hash::check($request->password, $loginUser->password)) {
 
                 Session::put('userId', $loginUser->id);
                 Session::put('userRole', $loginUser->role);

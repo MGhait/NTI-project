@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -16,21 +17,28 @@ class UserController extends Controller
     {
         if (\App\Policycheck::pv('admin'))
         {
-            $users = User::orderBy('id')->paginate(5);
+            $users = User::orderBy('id')->paginate(8);
             return view('dashboard.users.index', compact('users'))
-                ->with('i', (request()->input('page', 1) - 1) * 5);
+                ->with('i', (request()->input('page', 1) - 1) * 8);
         }
         elseif (\App\Policycheck::pv('supervisor'))
         {
-            $products = Product::where('needReview' , '=', 1)->orderBy('id')->paginate(5);
-//            dd($products);
+            $products = Product::where('needReview' , '=', 1)->orderBy('id')->paginate(8);
             return view('dashboard.users.index', compact('products'))
-                ->with('i', (request()->input('page', 1) - 1) * 5);
+                ->with('i', (request()->input('page', 1) - 1) * 8);
         }
         elseif (\App\Policycheck::pv('editor')){
-            $products = Product::orderBy('id')->paginate(5);
-            return view('dashboard.users.index', compact('products'))
-                ->with('i', (request()->input('page', 1) - 1) * 5);
+
+            $products = Product::orderBy('id')->paginate(8);
+//            $userProducts = $products->where('added_by',Session::get('userId'))->count();
+            $userProducts = $products->where('added_by',Session::get('userId'));
+//            $shownProducts = $products->where('needReview',0)->where('added_by',Session::get('userId'))->count();
+            return view('dashboard.users.index', compact('products','userProducts'))
+                ->with('i', (request()->input('page', 1) - 1) * 8);
+        }
+        else {
+            echo 'You don\'t have the policy';
+            dd(Session::get('userId'));
         }
 
     }
@@ -66,7 +74,17 @@ class UserController extends Controller
         $user->fullName = request('fullName');
         $user->role = request('role');
         $user->isActive = true;
+        // admin 1 - editor 2 - supervisor 3
+        if ($user->role == 'editor')
+        {
+            $policyId = 2;
+        }
+        else if ($user->role == 'supervisor')
+        {
+            $policyId = 3;
+        }
         $user->save();
+        $user->policies()->attach($policyId);
         return redirect()->route('users.index')
             ->with('success', 'Member created successfully.');
     }
@@ -122,7 +140,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('user.index')
+        return redirect()->route('users.index')
             ->with('success', 'Member deleted successfully.');
     }
     public function isActive(User $user)

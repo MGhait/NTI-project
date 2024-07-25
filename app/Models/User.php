@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -49,6 +50,11 @@ class User extends Authenticatable
         'role'
     ];
 
+
+    public function policies(): BelongsToMany
+    {
+        return $this->belongsToMany(Policy::class, 'policy_users');
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

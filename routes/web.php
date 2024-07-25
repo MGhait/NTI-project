@@ -30,6 +30,7 @@ Route::group(['prefix'=>'dashboard', 'middleware'=> LoggedMiddleware::class], fu
         return view('dashboard.products.index');
     });
     Route::resource("/products", ProductController::class);
+    Route::post('/products/bulk', [ProductController::class, 'bulk'])->name('products.bulk');
     Route::get('/products/publish/{product}', 'App\Http\Controllers\ProductController@publish')->name('products.publish');
     // ----------------------------- Users ---------------------------- //
     Route::get('/users', function (){
